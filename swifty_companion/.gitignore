@@ -1,27 +1,23 @@
-# Fichiers de configuration sensibles
+# Environment/Secrets
 .env
 *.env
 .env.*
+*.env.*
 
-# Flutter/Dart
+# Dart/Flutter
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
+.pub-cache/
 .pub/
-build/
+/build/
+.fvm/flutter_sdk
 coverage/
-lib/generated_plugin_registrant.dart
-pubspec.lock
-
-# Fichiers générés par Flutter
-*.g.dart
 *.freezed.dart
-*.config.dart
+*.g.dart
 *.gr.dart
 *.mocks.dart
-*.inject.dart
-*.inject.summary
 
 # Android
 **/android/**/gradle-wrapper.jar
@@ -32,9 +28,6 @@ pubspec.lock
 **/android/local.properties
 **/android/key.properties
 **/android/**/GeneratedPluginRegistrant.*
-**/android/app/debug
-**/android/app/profile
-**/android/app/release
 
 # iOS/XCode
 **/ios/**/*.mode1v3
@@ -46,66 +39,4 @@ pubspec.lock
 **/ios/**/.sconsign.dblite
 **/ios/**/.tags*
 **/ios/**/.vagrant/
-**/ios/**/DerivedData/
-**/ios/**/Icon?
-**/ios/**/Pods/
-**/ios/**/.symlinks/
-**/ios/**/profile
-**/ios/**/xcuserdata
-**/ios/.generated/
-**/ios/Flutter/App.framework
-**/ios/Flutter/Flutter.framework
-**/ios/Flutter/Flutter.podspec
-**/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/app.flx
-**/ios/Flutter/app.zip
-**/ios/Flutter/flutter_assets/
-**/ios/Flutter/flutter_export_environment.sh
-**/ios/ServiceDefinitions.json
-**/ios/Runner/GeneratedPluginRegistrant.*
-
-# IDE - VSCode
-.vscode/
-*.code-workspace
-**/.history/
-.vs/
-
-# IDE - IntelliJ IDEA/Android Studio
-.idea/
-*.iml
-*.iws
-*.ipr
-.idea_modules/
-**/android/app/.cxx/
-
-# Système d'exploitation
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Logs et base de données
-*.log
-*.sqlite
-*.db
-*.hive
-*.lock
-
-# Tests
-/coverage/
-.test_coverage.dart
-coverage_badge.svg
-
-# Documentation générée
-doc/
-/doc/api/
-
-# Fichiers temporaires
-*.tmp
-*.temp
-*.bak
-*.swp
-*~.nib
+**/ios/**/Derive
