@@ -1,3 +1,6 @@
+import 'package:swifty_companion/domain/entities/skill.dart';
+import 'package:swifty_companion/domain/entities/project.dart';
+
 class User {
   final String login;
   final String email;

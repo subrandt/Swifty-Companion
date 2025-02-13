@@ -3,6 +3,10 @@
 *.env
 .env.*
 *.env.*
+config.env
+*config.env
+config.env.*
+*config.env.*
 
 # Dart/Flutter
 .dart_tool/

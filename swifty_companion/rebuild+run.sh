@@ -10,10 +10,14 @@ if ps aux | grep -v grep | grep -i "android" | grep -v "android-studio" > /dev/n
 fi
 
 # Kill ADB server
-if pgrep -f "adb" > /dev/null; then
-    echo "🔌 Stopping ADB server..."
-    adb kill-server
-    sleep 1
+if command -v adb >/dev/null 2>&1; then
+    if pgrep -f "adb" > /dev/null; then
+        echo "🔌 Stopping ADB server..."
+        adb kill-server
+        sleep 1
+    fi
+else
+    echo "⚠️  ADB command not found, skipping ADB server stop..."
 fi
 
 # Kill any running Flutter process
