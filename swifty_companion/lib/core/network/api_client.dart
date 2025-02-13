@@ -10,12 +10,28 @@ class ApiClient {
   ApiClient(this._oauth2Client) {
     _dio = Dio(BaseOptions(
       baseUrl: ApiConfig().apiUrl,
-    ))..interceptors.add(ApiInterceptor(_oauth2Client));
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 3),
+    ))
+      ..interceptors.add(ApiInterceptor(_oauth2Client));
+  }
+
+  Future<Map<String, dynamic>> searchUser(String login) async {
+    try {
+      final response = await _dio.get('/users/$login');
+      return response.data;
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 404) {
+          throw Exception('User not found');
+        }
+        throw Exception('API Error: ${e.message}');
+      }
+      throw Exception('Failed to search user: $e');
+    }
   }
 
   Future<Response> get(String path) async {
     return await _dio.get(path);
   }
-
-  // Autres méthodes HTTP selon vos besoins
 }

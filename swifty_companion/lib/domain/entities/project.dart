@@ -1,13 +1,13 @@
 class Project {
   final String name;
-  final String status; // "completed", "failed", "in_progress"
+  final bool validated;
   final double? finalMark;
-  final String? validatedAt;
+  final String status;
 
   Project({
     required this.name,
-    required this.status,
+    required this.validated,
     this.finalMark,
-    this.validatedAt,
+    required this.status,
   });
 }

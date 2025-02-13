@@ -12,10 +12,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _searchController = TextEditingController();
-  final _oauth2Client = OAuth2Client();
   final _apiClient = ApiClient(OAuth2Client());
   UserModel? _user;
-
   bool _isLoading = false;
   String? _error;
 
@@ -26,77 +24,102 @@ class _SearchPageState extends State<SearchPage> {
         title: const Text('42 Student Search'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: MouseRegion(
-                    // Ajout du MouseRegion pour une meilleure gestion des événements
-                    child: TextFormField(
-                      // Changement pour TextFormField
-                      controller: _searchController,
-                      decoration: const InputDecoration(
-                        labelText: 'Enter student login',
-                        hintText: 'Ex: jdoe',
-                        border: OutlineInputBorder(),
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: const InputDecoration(
+                            labelText: 'Enter student login',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
+                          ),
+                          onFieldSubmitted: (value) {
+                            if (value.isNotEmpty) {
+                              _searchStudent(value);
+                            }
+                          },
+                        ),
                       ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_searchController.text.isNotEmpty) {
+                            _searchStudent(_searchController.text);
+                          }
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Icon(Icons.search),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (_isLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (_error != null)
+                Center(
+                  child: Text(
+                    _error!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                )
+              else if (_user != null)
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Text('Found user: ${_user!.login}'),
+                        if (_user!.imageUrl.isNotEmpty)
+                          Image.network(_user!.imageUrl),
+                        Text('Email: ${_user!.email}'),
+                        Text('Level: ${_user!.level}'),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_searchController.text.isNotEmpty) {
-                      _searchStudent(_searchController.text);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Icon(Icons.search),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            if (_isLoading)
-              const CircularProgressIndicator()
-            else if (_error != null)
-              Text(
-                _error!,
-                style: const TextStyle(color: Colors.red),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Future<void> _searchStudent(String login) async {
-    if (login.isEmpty) return;
-
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
+      print('🔍 Searching for user: $login');
       final userData = await _apiClient.searchUser(login);
-      final user = UserModel.fromJson(userData);
-      
+      print('📡 Raw API response: $userData');
+
+      if (userData == null) {
+        throw Exception('No data received from API');
+      }
+
       setState(() {
-        _user = user;
+        _user = UserModel.fromJson(userData);
         _isLoading = false;
       });
-
-      // Pour tester
-      print('User found: ${user.login}');
-      print('Level: ${user.level}');
-      
     } catch (e) {
+      print('❌ Error occurred: $e');
       setState(() {
         _isLoading = false;
         _error = 'Error: ${e.toString()}';
