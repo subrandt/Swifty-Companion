@@ -108,8 +108,32 @@ class _SearchPageState extends State<SearchPage> {
     try {
       print('🔍 Searching for user: $login');
       final userData = await _apiClient.searchUser(login);
-      print('📡 Raw API response: $userData');
+      // print('📡 Raw API response: $userData');
+    // Accéder à des champs spécifiques
+      print('🎉 User email: ${userData['email']}');
+      print('👤 User login: ${userData['login']}');
+      print('📍 User location: ${userData['location']}');
+      
+      // // Accéder à des objets imbriqués
+      // print('🎯 User cursus: ${userData['cursus_users']}');
+      
+      // // Accéder à des tableaux
+      // if (userData['projects_users'] != null) {
+      //   final projects = userData['projects_users'] as List;
+      //   projects.forEach((project) {
+      //     print('📚 Project name: ${project['project']['name']}');
+      //     print('   Status: ${project['status']}');
+      //     print('   Final mark: ${project['final_mark']}');
+      //   });
+      // }
 
+      // Accéder aux skills 
+      // if (userData['cursus_users'] != null && userData['cursus_users'].isNotEmpty) {
+      //   final skills = userData['cursus_users'][0]['skills'] as List;
+      //   skills.forEach((skill) {
+      //     print('💡 Skill: ${skill['name']} - Level: ${skill['level']}');
+      //   });
+      // }
       if (userData == null) {
         throw Exception('No data received from API');
       }
