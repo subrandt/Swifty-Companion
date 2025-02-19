@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'presentation/pages/search_page.dart';
+import 'config/theme.dart';
+import 'config/routes.dart';
+import 'package:flutter/material.dart';
 
 Future<void> main() async {
   try {
@@ -19,11 +20,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Swifty Companion',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const SearchPage(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      routes: Routes.getRoutes(),
+      initialRoute: Routes.search,
     );
   }
 }
