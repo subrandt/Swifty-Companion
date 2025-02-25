@@ -3,6 +3,7 @@ import 'package:swifty_companion/core/network/api_client.dart';
 import 'package:swifty_companion/data/models/user_model.dart';
 import '../core/network/oauth2_client.dart';
 import 'package:swifty_companion/config/routes.dart';
+import 'package:swifty_companion/config/theme.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -20,65 +21,88 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('42 Student Search'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _searchController,
-                          decoration: const InputDecoration(
-                            labelText: 'Enter student login',
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 10,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: AppTheme.backgroundDecoration,
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Titre
+                Text(
+                  'Find a 42 Student',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 30),
+
+                // Card avec champ de recherche
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextFormField(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
+                              labelText: 'Enter student login',
+                              prefixIcon: Icon(Icons.person_search),
+                            ),
+                            textAlign: TextAlign.left,
+                            onFieldSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _searchStudent(value);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_searchController.text.isNotEmpty) {
+                                  _searchStudent(_searchController.text);
+                                }
+                              },
+                              child: const Text('Search'),
                             ),
                           ),
-                          onFieldSubmitted: (value) {
-                            if (value.isNotEmpty) {
-                              _searchStudent(value);
-                            }
-                          },
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_searchController.text.isNotEmpty) {
-                            _searchStudent(_searchController.text);
-                          }
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Icon(Icons.search),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              if (_isLoading)
-                const Center(child: CircularProgressIndicator())
-              else if (_error != null)
-                Center(
-                  child: Text(
-                    _error!,
-                    style: const TextStyle(color: Colors.red),
+
+                const SizedBox(height: 24),
+
+                // Affichage du chargement ou des erreurs
+                if (_isLoading)
+                  const CircularProgressIndicator()
+                else if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Card(
+                      color: Colors.red.shade100,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          _error!,
+                          style: TextStyle(color: Colors.red.shade800),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -117,7 +141,7 @@ class _SearchPageState extends State<SearchPage> {
       print('❌ Error occurred: $e');
       setState(() {
         _isLoading = false;
-        _error = 'Error: ${e.toString()}';
+        _error = 'Student not found or network error';
       });
     }
   }
@@ -128,56 +152,3 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 }
-
-  // Future<void> _searchStudent(String login) async {
-  //   setState(() {
-  //     _isLoading = true;
-  //     _error = null;
-  //   });
-
-  //   try {
-  //     print('🔍 Searching for user: $login');
-  //     final userData = await _apiClient.searchUser(login);
-  //     // print('📡 Raw API response: $userData');
-  //   // Accéder à des champs spécifiques
-  //     print('🎉 User email: ${userData['email']}');
-  //     print('👤 User login: ${userData['login']}');
-  //     print('📍 User location: ${userData['location']}');
-      
-  //     // // Accéder à des objets imbriqués
-  //     // print('🎯 User cursus: ${userData['cursus_users']}');
-      
-  //     // // Accéder à des tableaux
-  //     // if (userData['projects_users'] != null) {
-  //     //   final projects = userData['projects_users'] as List;
-  //     //   projects.forEach((project) {
-  //     //     print('📚 Project name: ${project['project']['name']}');
-  //     //     print('   Status: ${project['status']}');
-  //     //     print('   Final mark: ${project['final_mark']}');
-  //     //   });
-  //     // }
-
-  //     // Accéder aux skills 
-  //     // if (userData['cursus_users'] != null && userData['cursus_users'].isNotEmpty) {
-  //     //   final skills = userData['cursus_users'][0]['skills'] as List;
-  //     //   skills.forEach((skill) {
-  //     //     print('💡 Skill: ${skill['name']} - Level: ${skill['level']}');
-  //     //   });
-  //     // }
-  //     if (userData == null) {
-  //       throw Exception('No data received from API');
-  //     }
-
-  //     setState(() {
-  //       _user = UserModel.fromJson(userData);
-  //       _isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print('❌ Error occurred: $e');
-  //     setState(() {
-  //       _isLoading = false;
-  //       _error = 'Error: ${e.toString()}';
-  //     });
-  //   }
-  // }
-
