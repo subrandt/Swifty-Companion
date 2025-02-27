@@ -84,7 +84,7 @@ class _SearchPageState extends State<SearchPage> {
 
                 const SizedBox(height: 24),
 
-                // Affichage du chargement ou des erreurs
+                // Loading spinner or error message
                 if (_isLoading)
                   const CircularProgressIndicator()
                 else if (_error != null)
@@ -126,7 +126,7 @@ class _SearchPageState extends State<SearchPage> {
 
       final user = UserModel.fromJson(userData);
 
-      // Navigation vers la page de profil
+      // Navigate to profile page
       if (mounted) {
         Navigator.pushNamed(
           context,

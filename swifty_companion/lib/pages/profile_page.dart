@@ -15,7 +15,7 @@ class ProfilePage extends StatelessWidget {
     final skills = user.getRelevantSkills();
     final cursusName = user.getRelevantCursusName();
 
-    // Filtrer et trier les projets
+    // Filter and sort projects
     final projects = _getSortedProjects(user.projects);
 
     return Scaffold(
@@ -87,11 +87,8 @@ class ProfilePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildSectionTitle(
-                              context,
-                              cursusName.isNotEmpty
-                                  ? 'Skills - $cursusName'
-                                  : 'Skills'),
+                          _buildSectionTitle(context,
+                              cursusName.isNotEmpty ? 'Skills' : 'Skills'),
                           const SizedBox(height: 12),
                           ...skills.map((skill) => _buildFixedSkillBar(
                               context, skill.name, skill.level)),
@@ -126,18 +123,11 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Trier les projets (les validés d'abord, puis par note décroissante)
+  // Alphabetically sort projects
   List<ProjectModel> _getSortedProjects(List<ProjectModel> projects) {
     final sortedProjects = List<ProjectModel>.from(projects);
     sortedProjects.sort((a, b) {
-      // D'abord trier par statut validé
-      if (a.validated && !b.validated) return -1;
-      if (!a.validated && b.validated) return 1;
-
-      // Ensuite par note (décroissant)
-      final aScore = a.finalMark ?? 0;
-      final bScore = b.finalMark ?? 0;
-      return bScore.compareTo(aScore);
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
     return sortedProjects;
   }
@@ -201,7 +191,7 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 4),
           // Progress bar
           LinearProgressIndicator(
-            value: level / 20, // Assuming max level is 20
+            value: level / 21, // Assuming max level is 21
             backgroundColor: Colors.grey[300],
             color: Theme.of(context).colorScheme.primary,
             minHeight: 8,
@@ -215,7 +205,8 @@ class ProfilePage extends StatelessWidget {
   // Project item
   Widget _buildProjectItem(BuildContext context, ProjectModel project) {
     final bool isValidated = project.validated;
-    final Color statusColor = isValidated ? Colors.green : Colors.red;
+    final Color statusColor =
+        isValidated ? Colors.green : const Color.fromARGB(255, 236, 115, 210);
     String statusText = project.status.replaceAll('_', ' ');
     statusText = statusText[0].toUpperCase() + statusText.substring(1);
 
