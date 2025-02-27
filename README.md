@@ -5,14 +5,14 @@ A mobile application developed as part of the 42 school curriculum that allows u
 
 ### Search Page :
 <div align="center">
-  <img src="assets/images/search_page.png" alt="Search Page" height="400">
+  <img src="swifty_companion/assets/images/search_page.png" alt="Search Page" height="400">
 <br>The search interface allows users to find 42 students by their login
 </div>
 
 ### Profile View :
 
 <div align="center">
-  <img src="assets/images/profile_page.png" alt="Profile Page" height="400">
+  <img src="swifty_companion/assets/images/profile_page.png" alt="Profile Page" height="400">
 <br>Detailed profile view showing student information, skills and project history
 </div>
 
