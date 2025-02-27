@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:swifty_companion/config/api_config.dart';
+import 'package:swifty_companion/core/errors/exceptions.dart';
 import 'api_interceptor.dart';
 import 'oauth2_client.dart';
 
@@ -23,11 +24,11 @@ class ApiClient {
     } catch (e) {
       if (e is DioException) {
         if (e.response?.statusCode == 404) {
-          throw Exception('User not found');
+          throw UserException('User not found');
         }
-        throw Exception('API Error: ${e.message}');
+        throw ApiError('${e.message}');
       }
-      throw Exception('Failed to search user: $e');
+      throw UserException('Failed to search user: $e');
     }
   }
 

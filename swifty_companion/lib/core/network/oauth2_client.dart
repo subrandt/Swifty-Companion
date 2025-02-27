@@ -29,6 +29,7 @@ class OAuth2Client {
       );
 
       _accessToken = response.data['access_token'];
+      print('🔑 New access token: $_accessToken');
       _expiryTime = DateTime.now().add(
         Duration(seconds: response.data['expires_in'] ?? 7200),
       );

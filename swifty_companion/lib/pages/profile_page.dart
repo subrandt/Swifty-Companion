@@ -11,11 +11,19 @@ class ProfilePage extends StatelessWidget {
     final UserModel user =
         ModalRoute.of(context)!.settings.arguments as UserModel;
 
+    // Get skills and cursus name based on active status
+    final skills = user.getRelevantSkills();
+    final cursusName = user.getRelevantCursusName();
+
+    // Filtrer et trier les projets
+    final projects = _getSortedProjects(user.projects);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(user.login),
-        // AppBar avec thème transparent
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Container(
         width: double.infinity,
@@ -27,7 +35,7 @@ class ProfilePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Photo de profil
+                // Profile picture
                 if (user.imageUrl.isNotEmpty)
                   CircleAvatar(
                     radius: 50,
@@ -36,15 +44,15 @@ class ProfilePage extends StatelessWidget {
                   ),
                 const SizedBox(height: 16),
 
-                // // Nom d'utilisateur --> il faut le nom et prenom ici
-                // Text(
-                //   user.login,
-                //   style: Theme.of(context).textTheme.headlineMedium,
-                //   textAlign: TextAlign.center,
-                // ),
-                // const SizedBox(height: 24),
+                // Username
+                Text(
+                  user.firstName + ' ' + user.lastName,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
 
-                // Card des informations de base
+                // Basic info card
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -71,42 +79,45 @@ class ProfilePage extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // // Card des compétences
-                // if (user.cursusUsers != null && user.cursusUsers!.isNotEmpty &&
-                //     user.cursusUsers![0].skills != null && user.cursusUsers![0].skills!.isNotEmpty)
-                //   Card(
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(16.0),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           _buildSectionTitle(context, 'Skills'),
-                //           const SizedBox(height: 12),
-                //           ...user.cursusUsers![0].skills!.map((skill) =>
-                //             _buildSkillBar(context, skill.name, skill.level)),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
+                // Skills card
+                if (skills.isNotEmpty)
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle(
+                              context,
+                              cursusName.isNotEmpty
+                                  ? 'Skills - $cursusName'
+                                  : 'Skills'),
+                          const SizedBox(height: 12),
+                          ...skills.map((skill) => _buildFixedSkillBar(
+                              context, skill.name, skill.level)),
+                        ],
+                      ),
+                    ),
+                  ),
 
-                // const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-                // // Card des projets
-                // if (user.projectsUsers != null && user.projectsUsers!.isNotEmpty)
-                //   Card(
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(16.0),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           _buildSectionTitle(context, 'Projects'),
-                //           const SizedBox(height: 12),
-                //           ...user.projectsUsers!.map((project) =>
-                //             _buildProjectItem(context, project)),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
+                // Projects card
+                if (projects.isNotEmpty)
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle(context, 'Projects'),
+                          const SizedBox(height: 12),
+                          ...projects.map(
+                              (project) => _buildProjectItem(context, project)),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -115,7 +126,23 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Titre de section
+  // Trier les projets (les validés d'abord, puis par note décroissante)
+  List<ProjectModel> _getSortedProjects(List<ProjectModel> projects) {
+    final sortedProjects = List<ProjectModel>.from(projects);
+    sortedProjects.sort((a, b) {
+      // D'abord trier par statut validé
+      if (a.validated && !b.validated) return -1;
+      if (!a.validated && b.validated) return 1;
+
+      // Ensuite par note (décroissant)
+      final aScore = a.finalMark ?? 0;
+      final bScore = b.finalMark ?? 0;
+      return bScore.compareTo(aScore);
+    });
+    return sortedProjects;
+  }
+
+  // Section title widget
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
@@ -126,7 +153,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Ligne d'information
+  // Info row with icon and text
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -145,25 +172,36 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Barre de compétence
-  Widget _buildSkillBar(BuildContext context, String name, double level) {
-    final percentage = (level * 100).toInt();
-
+  // Fixed skill bar to prevent overflow on mobile screens
+  Widget _buildFixedSkillBar(BuildContext context, String name, double level) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Using a Row with expanded text
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(name),
-              Text('Level: ${level.toStringAsFixed(2)} ($percentage%)'),
+              // Skill name with overflow handling
+              Expanded(
+                child: Text(
+                  name,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              // Level indicator with some spacing
+              const SizedBox(width: 8),
+              Text(
+                'Level: ${level.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 14),
+              ),
             ],
           ),
           const SizedBox(height: 4),
+          // Progress bar
           LinearProgressIndicator(
-            value: level / 20, // Supposant un niveau max de 20
+            value: level / 20, // Assuming max level is 20
             backgroundColor: Colors.grey[300],
             color: Theme.of(context).colorScheme.primary,
             minHeight: 8,
@@ -174,11 +212,18 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Élément de projet - version corrigée selon votre structure de données
+  // Project item
   Widget _buildProjectItem(BuildContext context, ProjectModel project) {
     final bool isValidated = project.validated;
     final Color statusColor = isValidated ? Colors.green : Colors.red;
-    final String statusText = isValidated ? 'Validated' : 'Failed';
+    String statusText = project.status.replaceAll('_', ' ');
+    statusText = statusText[0].toUpperCase() + statusText.substring(1);
+
+    if (isValidated) {
+      statusText = 'Validated';
+    } else if (project.status == 'finished') {
+      statusText = 'Failed';
+    }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8.0),
@@ -187,15 +232,15 @@ class ProfilePage extends StatelessWidget {
         title: Text(
           project.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,
         ),
         subtitle: project.finalMark != null
-            ? Text('Final Mark: ${project.finalMark}')
+            ? Text('Mark: ${project.finalMark?.toInt()}')
             : null,
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color:
-                statusColor.withAlpha(51), // Remplacement de withOpacity(0.2)
+            color: statusColor.withAlpha(51),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: statusColor),
           ),

@@ -18,7 +18,8 @@ class ApiInterceptor extends Interceptor {
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+      DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       // Token invalide ou expiré, on peut essayer de rafraîchir
       await _oauth2Client.getAccessToken();

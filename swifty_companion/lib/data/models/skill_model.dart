@@ -1,9 +1,10 @@
 import '../../domain/entities/skill.dart';
 
 class SkillModel extends Skill {
-  SkillModel.fromJson(Map<String, dynamic> json) : super(
-    name: json['name'] ?? '',
-    level: (json['level'] as num?)?.toDouble() ?? 0.0,
-    percentage: (json['percentage'] as num?)?.toDouble() ?? 0.0,
-  );
+  SkillModel.fromJson(Map<String, dynamic> json)
+      : super(
+          id: json['id'] ?? 0,
+          name: json['name'] ?? '',
+          level: json['level'] ?? 0.0,
+        );
 }

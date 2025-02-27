@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swifty_companion/core/errors/exceptions.dart';
 import 'package:swifty_companion/core/network/api_client.dart';
 import 'package:swifty_companion/data/models/user_model.dart';
 import '../core/network/oauth2_client.dart';
@@ -120,7 +121,7 @@ class _SearchPageState extends State<SearchPage> {
       final userData = await _apiClient.searchUser(login);
 
       if (userData == null) {
-        throw Exception('No data received from API');
+        throw ApiError('No data received from API');
       }
 
       final user = UserModel.fromJson(userData);
@@ -141,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
       print('❌ Error occurred: $e');
       setState(() {
         _isLoading = false;
-        _error = 'Student not found or network error';
+        _error = 'Student not found';
       });
     }
   }
