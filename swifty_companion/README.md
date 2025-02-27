@@ -1,73 +1,108 @@
 # Swifty Companion
 
-A mobile application developed as part of the 42 school curriculum to introduce mobile development. The app allows users to search and view detailed profiles of 42 students using the official 42 API.
+A mobile application developed as part of the 42 school curriculum that allows users to search and view detailed profiles of 42 students using the official 42 API.
 
-## Description
+
+### Search Page
+![Search Page](assets/images/search_page.png)
+*The search interface allows users to find 42 students by their login*
+
+### Profile View
+![Profile Page](assets/images/profile_page.png)
+*Detailed profile view showing student information, skills and project history*
+
+
+## Project Overview
 
 This project introduces mobile application development using Flutter, focusing on:
-- Mobile programming with Dart
-- API integration with OAuth2 authentication
-- Modern app architecture and state management
-- Responsive UI design
-- Error handling and user experience
+- Cross-platform mobile development with Dart
+- RESTful API integration with OAuth2 authentication
+- Client-Server communication
+- Responsive UI design for different screen sizes
+- Error handling and user experience optimization
 
-## Technologies
+## Technologies Used
 
-- **Flutter**: Cross-platform mobile development framework
-- **Bloc Pattern**: For state management
-- **Dio**: HTTP client for API calls
-- **GetIt**: Dependency injection
-- **flutter_dotenv**: Environment variables management
-- **shared_preferences**: Local storage
+### Frontend
+- **Flutter**: Google's UI toolkit for building natively compiled applications
+- **Dart**: Programming language optimized for multi-platform development
+- **Provider Pattern**: For lightweight state management
+- **Custom Widgets**: Responsive and reusable UI components
 
-## 42 API
+### Networking & Data
+- **Dio**: Feature-rich HTTP client for API requests
+- **flutter_dotenv**: Secure environment variables management
+- **JSON Serialization**: Custom model classes for type-safe data handling
 
-The application uses the 42 intranet API which:
-- Requires OAuth2 authentication
-- Provides student profiles, skills, and projects data
-- Has rate limiting and token expiration handling
+### Authentication
+- **OAuth2**: Secure token-based API authentication
+- **Token Management**: Automatic refresh of expired tokens
+
+## 42 API Integration
+
+The application integrates with the 42 School's API:
+- OAuth2 client credentials flow
+- RESTful endpoints for student data
+- Handling of API rate limits and pagination
+- Structured student profile data including:
+  - Personal information
+  - Skills and competencies with progress levels
+  - Project history with status indicators
+
+### API Authentication
+
+```bash
+# Example of obtaining an access token
+curl -X POST --data "grant_type=client_credentials&client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET" https://api.intra.42.fr/oauth/token
+```
 
 ## Features
 
-### Mandatory
-- Two views: Search and Profile
-- Comprehensive error handling
-- Student profile display:
-    - Basic info (login, email, mobile, level)
-    - Profile picture
-    - Location & wallet info
-    - Skills with levels and percentages
-    - Completed and failed projects
-- Responsive layout
-- Secure OAuth2 implementation
+### User Interface
+- **Search View**: Clean interface for finding 42 students by login
+- **Profile View**: Comprehensive student profile display with:
+  - Profile picture and personal information
+  - Current location status
+  - Interactive skills visualization with progress bars
+  - Project history with completion status
+  - Visual indicators for project success/failure
 
-### Bonus
-- Automatic token refresh on expiration
+### User Experience
+- **Error Handling**: Intuitive error messages for network issues or user not found
+- **Loading States**: Smooth loading indicators during API requests
+- **Responsive Design**: Adapts to different screen sizes and orientations
+- **Visual Feedback**: Color-coded indicators for student status and project outcomes
+
+### Security
+- **Environment Variables**: Secure storage of API credentials
+- **Token Management**: Proper handling of OAuth tokens
+- **No Credential Storage**: API secrets never stored in the application code
 
 ## Project Structure
+
 ```
 lib/
-  ├── config/               # App configuration
-  ├── core/                # Core functionality
-  │   ├── errors/         # Error handling
-  │   ├── network/        # API clients
-  │   └── utils/          # Utilities
-  ├── data/               # Data layer
-  │   ├── models/         # Data models
-  │   ├── repositories/   # Repository implementations
-  │   └── datasources/    # Remote/local data sources
-  ├── domain/             # Business logic
-  │   ├── entities/       # Business entities
-  │   └── repositories/   # Repository interfaces
-  └── presentation/       # UI layer
-      ├── bloc/          # State management
-      ├── pages/         # App screens
-      └── widgets/       # Reusable widgets
+  ├── config/               # App configuration and environment
+  ├── core/                 # Core functionality
+  │   ├── errors/           # Custom exceptions and error handling
+  │   └── network/          # API clients and OAuth2 implementation
+  ├── data/                 # Data layer
+  │   └── models/           # Data models (User, Project, Skill)
+  ├── domain/               # Business logic
+  │   ├── entities/         # Core business entities
+  │   └── repositories/     # Data source implementations
+  └── presentation/         # UI layer
+      └── pages/            # App screens (Search, Profile)
 ```
 
-## Setup
+## Setup Instructions
 
-### Option 1: Using the Setup Script
+### Prerequisites
+- Flutter SDK (2.10.0 or higher)
+- Dart (2.16.0 or higher)
+- 42 API credentials (UID and Secret)
+
+### Installation
 
 1. Clone the repository
 ```bash
@@ -75,45 +110,56 @@ git clone <repository-url>
 cd swifty_companion
 ```
 
-2. Create `.env` file with your 42 API credentials:
+2. Create a `config.env` file in the project root with your 42 API credentials:
 ```
 API_UID=your_42_client_id
 API_SECRET=your_42_client_secret
-API_URL=https://api.intra.42.fr
+API_URL=https://api.intra.42.fr/v2
+API_OAUTH_URL=https://api.intra.42.fr/oauth/token
 ```
 
-3. Run the setup script
-```bash
-chmod +x rebuild+run.sh
-./rebuild+run.sh
-```
-
-This script will:
-- Clean the Flutter project
-- Stop any running Android/Flutter processes
-- Remove cache and build directories
-- Get packages
-- Run the app
-
-### Option 2: Manual Setup
-
-1. Clone the repository
-```bash
-git clone <repository-url>
-cd swifty_companion
-```
-
-2. Create `.env` file with your 42 API credentials
-3. Install dependencies:
+3. Install dependencies
 ```bash
 flutter pub get
 ```
 
-4. Run the app:
+4. Run the application
 ```bash
 flutter run
 ```
 
-## Security Note
+or use the full run script to install dependencies and run the application: 
+```
+./rebuild+run.sh
+```
 
-The project requires proper handling of API credentials. Never commit the `.env` file or share API credentials publicly.
+## Implementation Details
+
+### OAuth2 Token Management
+The application implements a robust token management system that:
+- Securely stores API credentials in environment variables
+- Obtains access tokens using the client credentials flow
+- Automatically refreshes tokens when they expire
+- Handles authentication errors gracefully
+
+### User Search & Profile Display
+- Efficient API requests with proper error handling
+- Optimized data models for type safety
+- Responsive UI that adapts to different screen sizes
+- Intuitive navigation between search and profile views
+
+## Security Considerations
+
+This project follows security best practices:
+- API credentials are stored in a non-committed `.env` file
+- OAuth tokens are managed securely and never persisted in plain text
+- Network requests use HTTPS for secure communication
+- Error messages are user-friendly without exposing sensitive information
+
+## Screenshots
+
+Replace these placeholders with actual screenshots from your application:
+
+| Search View | Profile View | Skills Detail |
+|-------------|--------------|---------------|
+| ![Search](https://via.placeholder.com/250x500?text=Search) | ![Profile](https://via.placeholder.com/250x500?text=Profile) | ![Skills](https://via.placeholder.com/250x500?text=Skills) |

@@ -22,17 +22,19 @@ class OAuth2Client {
   // Refresh the access token
   Future<String> _refreshToken() async {
     try {
+      final requestData = {
+        'grant_type': 'client_credentials',
+        'client_id': _config.clientId,
+        'client_secret': _config.clientSecret,
+      };
+
       final response = await _dio.post(
-        '${_config.apiUrl}/oauth/token',
-        data: {
-          'grant_type': 'client_credentials',
-          'client_id': _config.clientId,
-          'client_secret': _config.currentSecret,
-        },
+        _config.authUrl,
+        data: requestData,
       );
 
       _accessToken = response.data['access_token'];
-      print('🔑 New access token: $_accessToken');
+      print('🔑 New access token obtained successfully: $_accessToken');
       _expiryTime = DateTime.now().add(
         Duration(seconds: response.data['expires_in'] ?? 7200),
       );

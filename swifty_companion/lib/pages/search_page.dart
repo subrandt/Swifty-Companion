@@ -120,7 +120,7 @@ class _SearchPageState extends State<SearchPage> {
       print('🔍 Searching for user: $login');
       final userData = await _apiClient.searchUser(login);
 
-      if (userData == null) {
+      if (userData.isEmpty) {
         throw ApiError('No data received from API');
       }
 

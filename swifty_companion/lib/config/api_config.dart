@@ -5,14 +5,13 @@ class ApiConfig {
   factory ApiConfig() => _instance;
   ApiConfig._internal();
 
-  String get currentSecret {
-    final switchDate = DateTime(2025, 2, 25);
-    if (DateTime.now().isAfter(switchDate)) {
-      return dotenv.env['API_SECRET_NEXT'] ?? '';
-    }
-    return dotenv.env['API_SECRET'] ?? '';
-  }
+  // Simplement retourner le secret actuel
+  String get clientSecret => dotenv.env['API_SECRET'] ?? '';
 
   String get clientId => dotenv.env['API_UID'] ?? '';
-  String get apiUrl => dotenv.env['API_URL'] ?? 'https://api.intra.42.fr';
+
+  // Séparer l'URL de base de l'API et l'URL d'authentification
+  String get apiUrl => dotenv.env['API_URL'] ?? 'https://api.intra.42.fr/v2';
+  String get authUrl =>
+      dotenv.env['API_OAUTH_URL'] ?? 'https://api.intra.42.fr/oauth/token';
 }
