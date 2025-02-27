@@ -155,7 +155,7 @@ The application implements a robust token management system that:
 ## Security Considerations
 
 This project follows security best practices:
-- API credentials are stored in a non-committed `.env` file
+- API credentials are stored in a non-committed `config.env` file
 - OAuth tokens are managed securely and never persisted in plain text
 - Network requests use HTTPS for secure communication
 - Error messages are user-friendly without exposing sensitive information
