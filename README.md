@@ -3,14 +3,18 @@
 A mobile application developed as part of the 42 school curriculum that allows users to search and view detailed profiles of 42 students using the official 42 API.
 
 
-### Search Page
-![Search Page](assets/images/search_page.png)
-*The search interface allows users to find 42 students by their login*
+### Search Page :
+<div align="center">
+  <img src="assets/images/search_page.png" alt="Search Page" height="400">
+<br>The search interface allows users to find 42 students by their login
+</div>
 
-### Profile View
-![Profile Page](assets/images/profile_page.png)
-*Detailed profile view showing student information, skills and project history*
+### Profile View :
 
+<div align="center">
+  <img src="assets/images/profile_page.png" alt="Profile Page" height="400">
+<br>Detailed profile view showing student information, skills and project history
+</div>
 
 ## Project Overview
 
